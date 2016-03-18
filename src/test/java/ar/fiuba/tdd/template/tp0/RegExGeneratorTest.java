@@ -9,11 +9,13 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertTrue;
 
 public class RegExGeneratorTest {
+    static final int MAX_RESULT = 10;
 
-    private boolean validate(String regEx, int numberOfResults) {
-        RegExGenerator generator = new RegExGenerator();
-        // TODO: Uncomment parameters
-        List<String> results = generator.generate(/*regEx, numberOfResults*/);
+    private boolean validate(String regEx, int numberOfResults) throws RegExError  {
+
+        RegExGenerator generator = new RegExGenerator(MAX_RESULT);
+
+        List<String> results = generator.generate(regEx, numberOfResults);
         // force matching the beginning and the end of the strings
         Pattern pattern = Pattern.compile("^" + regEx + "$");
         return results
@@ -26,42 +28,80 @@ public class RegExGeneratorTest {
                     (item1, item2) -> item1 && item2);
     }
 
-    //TODO: Uncomment these tests
-    /*
+
     @Test
-    public void testAnyCharacter() {
+    public void testAnyCharacter() throws RegExError {
         assertTrue(validate(".", 1));
     }
 
     @Test
-    public void testMultipleCharacters() {
+    public void testMultipleCharacters() throws RegExError {
         assertTrue(validate("...", 1));
     }
 
     @Test
-    public void testLiteral() {
+    public void testLiteral() throws RegExError {
         assertTrue(validate("\\@", 1));
     }
 
     @Test
-    public void testLiteralDotCharacter() {
+    public void testLiteralDotCharacter() throws RegExError {
         assertTrue(validate("\\@..", 1));
     }
 
     @Test
-    public void testZeroOrOneCharacter() {
-        assertTrue(validate("\\@.h?", 1));
+    public void testZeroOrOneCharacter() throws RegExError {
+        assertTrue(validate("\\@.h?", 5));
     }
 
     @Test
-    public void testCharacterSet() {
-        assertTrue(validate("[abc]", 1));
+    public void testCharacterSet() throws RegExError {
+        assertTrue(validate("[abc]", 3));
     }
 
     @Test
-    public void testCharacterSetWithQuantifiers() {
-        assertTrue(validate("[abc]+", 1));
+    public void testCharacterSetWithQuantifiers() throws RegExError {
+        assertTrue(validate("[abc]+", 3));
     }
-    */
-    // TODO: Add more tests!!!
+
+    @Test
+    public void testCharacterSetWithQuantifiersAndLiterals() throws RegExError {
+        assertTrue(validate("a[abc]*f", 2));
+    }
+
+    @Test
+    public void testExampleTP0PDF() throws RegExError {
+        assertTrue(validate("..+[ab]*d?c", 3));
+    }
+
+    @Test
+    public void testGroupZeroOrOneCharacter() throws RegExError {
+        validate(".*[456]?D*.?",3);
+    }
+
+    @Test
+    public void testAllQuantifiersWithbackslash() throws RegExError {
+        validate("a?\\@+\\?*",3);
+    }
+
+    @Test
+    public void testAllQuantifiersWithoutbackslash() throws RegExError {
+        validate("Z?j+9?ABCi*",3);
+    }
+
+    @Test(expected = RegExError.class)
+    public void testErrorOpenGroup() throws RegExError {
+        validate("[[]",1);
+    }
+
+    @Test(expected = RegExError.class)
+    public void testErrorCloseGroup() throws RegExError {
+        validate("[a]b]*",1);
+    }
+
+    @Test(expected = RegExError.class)
+    public void testErrorOnlyQuantifier() throws RegExError {
+        validate("+",1);
+    }
+
 }
