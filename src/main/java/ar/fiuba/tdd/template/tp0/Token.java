@@ -3,7 +3,7 @@ package ar.fiuba.tdd.template.tp0;
 import java.util.ArrayList;
 
 public class Token {
-    private static int MAXIMA_CARDINALITY  = 10;
+    private static int MAXIMA_CARDINALITY  = 100;
 
     boolean existsBackslash;
     char token;
@@ -28,6 +28,7 @@ public class Token {
             case '[': return "START_GROUP";
             case ']': return "END_OF_GROUP";
             case '.': return "RANDOM";
+            case '?': return "ONE";
             default:
                 return "NONE";
         }

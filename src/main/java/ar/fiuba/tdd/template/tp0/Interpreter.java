@@ -49,6 +49,7 @@ public class Interpreter {
                 this.buffer = readOnlyOneValue( );
             }
         }
+
     }
 
     private void cleanBuffer( ) {
@@ -141,8 +142,16 @@ public class Interpreter {
 
         StringBuilder buildingNewBuffer = new StringBuilder( );
 
-        if (Objects.equals(this.beforeToken.getTypeToken(), "RANDOM")) {
-            this.buffer = getRandomString( determinateLenghtQuantifiere( ) );
+        switch (this.beforeToken.getTypeToken()) {
+            case "RANDOM":
+                this.buffer = getRandomString( determinateLenghtQuantifiere( ) );
+                break;
+            case "END_OF_GROUP":
+                if (Objects.equals(currentToken.getTypeToken(), "ONE")) {
+                    this.buffer = readOnlyOneValue( );
+                }
+                break;
+            default:
         }
 
         for (char value : this.buffer.toCharArray()) {
